@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "sync-cookie-extension",
+  "version": "1.0.0",
+  "description": "开发环境同步测试 cookie 至 localhost，便于本地请求服务携带 cookie",
+  "icons": {
+    "16": "sources/cookie16.png",
+    "32": "sources/cookie32.png",
+    "48": "sources/cookie48.png",
+    "128": "sources/cookie128.png"
+  },
+  "action": {
+    "default_icon": "sources/cookie48.png",
+    "default_title": "解决本地开发 localhost 请求无法携带 cookie 问题",
+    "default_popup": "index.html"
+  },
+  "permissions": ["storage", "cookies"],
+  "host_permissions": ["<all_urls>"]
+}
