@@ -10,10 +10,7 @@ declare module '@vue/runtime-core' {
     AButton: typeof import('ant-design-vue/es')['Button']
     AInput: typeof import('ant-design-vue/es')['Input']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
-    ASelect: typeof import('ant-design-vue/es')['Select']
-    ASelectOption: typeof import('ant-design-vue/es')['SelectOption']
     ATable: typeof import('ant-design-vue/es')['Table']
-    ATypographyLink: typeof import('ant-design-vue/es')['TypographyLink']
     Main: typeof import('./src/components/Main.vue')['default']
   }
 }

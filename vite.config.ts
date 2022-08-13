@@ -22,6 +22,9 @@ export default defineConfig({
   server: {
     host: true,
   },
+  build: {
+    sourcemap: true,
+  },
   css: {
     preprocessorOptions: {
       less: {

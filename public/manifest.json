@@ -15,5 +15,9 @@
     "default_popup": "index.html"
   },
   "permissions": ["storage", "cookies"],
-  "host_permissions": ["<all_urls>"]
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  }
 }

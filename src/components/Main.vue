@@ -2,10 +2,6 @@
   <a-table :columns="columns" :data-source="dataSource" :pagination="false">
     <template #bodyCell="{ column, text, record }">
       <!-- 可编辑行 -->
-      <template v-if="column.dataIndex === 'type'">
-        <!-- TODO 增加其他类型同步 -->
-        <span>{{ text }}</span>
-      </template>
       <template v-if="['from', 'cookieName', 'to'].includes(column.dataIndex)">
         <div>
           <a-input
@@ -34,27 +30,23 @@
       </template>
     </template>
   </a-table>
+
+  <!-- 新增按钮 -->
+  <a-button type="primary" @click="handleAdd">新增</a-button>
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref, unref } from "vue";
 import type { UnwrapRef } from "vue";
-import { cloneDeep } from "lodash-es";
-import { ICookieTableDataSource, ICookieTableColumn } from "./type";
-
-const TYPE = ["cookie", "sessionStorage"];
+import { cloneDeep, isEmpty } from "lodash-es";
+import useStorage from "./hooks/useStorage";
+import { ICookieTableDataSource, ICookieTableColumn, LIST_KEY } from "./type";
 
 const columns = ref<ICookieTableColumn[]>([
   {
     title: "id",
     dataIndex: "id",
     key: "id",
-    align: "center",
-  },
-  {
-    title: "类型",
-    dataIndex: "type",
-    key: "type",
     align: "center",
   },
   {
@@ -86,29 +78,25 @@ const columns = ref<ICookieTableColumn[]>([
 const dataSource = ref<ICookieTableDataSource[]>([
   {
     id: "1",
-    type: "cookie",
-    from: ".horizon.com",
+    from: ".fehorizon.com",
     cookieName: "fesso_access_token",
     to: "localhost",
   },
   {
     id: "2",
-    type: "cookie",
-    from: ".horizon.com",
+    from: ".fehorizon.com",
     cookieName: "fesso_refresh_token",
     to: "localhost",
   },
   {
     id: "3",
-    type: "cookie",
-    from: ".horizon.com",
+    from: ".fehorizon.com",
     cookieName: "fesso_token_since",
     to: "localhost",
   },
   {
     id: "4",
-    type: "cookie",
-    from: ".horizon.com",
+    from: ".fehorizon.com",
     cookieName: "original_access_token",
     to: "localhost",
   },
@@ -117,26 +105,75 @@ const dataSource = ref<ICookieTableDataSource[]>([
 const editableData: UnwrapRef<Record<string, ICookieTableDataSource>> =
   reactive({});
 
+const { updateStorage, getStorage, updateCookie } = useStorage();
+
+onMounted(async () => {
+  // 从 localStorage 初始化数据
+  const storage = await getStorage();
+  const domainList = !isEmpty(storage)
+    ? (Object.values(storage[LIST_KEY]) as ICookieTableDataSource[])
+    : [];
+
+  if (!isEmpty(domainList)) {
+    dataSource.value = domainList;
+  }
+
+  // 更新 localStorage 和 cookie
+  if (!isEmpty(unref(dataSource))) {
+    updateStorage(dataSource.value);
+
+    dataSource.value.forEach((item) => {
+      console.log("item: ", item);
+      updateCookie({
+        from: item.from,
+        to: item.to,
+        cookieName: item.cookieName,
+      });
+    });
+  }
+});
+
 function handleEdit(rowId: string) {
   editableData[rowId] = cloneDeep(
     dataSource.value.filter((item) => item.id === rowId)[0]
   );
 }
 
-function handleSave(rowId: string) {
+async function handleSave(rowId: string) {
   Object.assign(
     dataSource.value.filter((item) => item.id === rowId)[0],
     editableData[rowId]
   );
   delete editableData[rowId];
+  // 更新 localStorage
+  updateStorage(dataSource.value);
 }
 
 function handleDelete(rowId: string) {
   const deleteIndex = dataSource.value.findIndex((item) => (item.id = rowId));
-  dataSource.value.splice(deleteIndex, 1);
+  dataSource.value.splice(deleteIndex - 1, 1);
 }
 
 function handleCancel(rowId: string) {
   delete editableData[rowId];
+}
+
+function handleAdd() {
+  const maxId =
+    dataSource.value.length > 0
+      ? Math.max(...dataSource.value.map((item) => Number(item.id)))
+      : 0;
+
+  const addDataId = (maxId + 1).toString();
+
+  dataSource.value.push({
+    id: addDataId,
+    from: "",
+    cookieName: "",
+    to: "",
+  });
+
+  // 新增后空数据可以编辑
+  handleEdit(addDataId);
 }
 </script>
