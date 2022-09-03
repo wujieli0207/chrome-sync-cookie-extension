@@ -52,6 +52,7 @@ import type { UnwrapRef } from "vue";
 import { cloneDeep, isEmpty } from "lodash-es";
 import useStorage from "./hooks/useStorage";
 import { ICookieTableDataSource, ICookieTableColumn, LIST_KEY } from "./type";
+import { DEFAULT_LIST } from "./config";
 
 const isOpenSync = ref(true);
 
@@ -88,32 +89,7 @@ const columns = ref<ICookieTableColumn[]>([
   },
 ]);
 
-const dataSource = ref<ICookieTableDataSource[]>([
-  {
-    id: "1",
-    from: ".fehorizon.com",
-    cookieName: "fesso_access_token",
-    to: "localhost",
-  },
-  {
-    id: "2",
-    from: ".fehorizon.com",
-    cookieName: "fesso_refresh_token",
-    to: "localhost",
-  },
-  {
-    id: "3",
-    from: ".fehorizon.com",
-    cookieName: "fesso_token_since",
-    to: "localhost",
-  },
-  {
-    id: "4",
-    from: ".fehorizon.com",
-    cookieName: "original_access_token",
-    to: "localhost",
-  },
-]);
+const dataSource = ref<ICookieTableDataSource[]>(DEFAULT_LIST);
 
 const editableData: UnwrapRef<Record<string, ICookieTableDataSource>> =
   reactive({});
