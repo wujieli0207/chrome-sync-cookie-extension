@@ -98,7 +98,7 @@ const { updateStorage, getStorage, updateCookie } = useStorage();
 
 onMounted(async () => {
   // 初始化开启同步状态
-  const openSyncLocal = await chrome.storage.local.get("isOpenSync");
+  const openSyncLocal = await getStorage("isOpenSync");
 
   if (!isEmpty(openSyncLocal)) {
     isOpenSync.value = openSyncLocal.isOpenSync;
