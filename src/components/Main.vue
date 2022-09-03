@@ -103,7 +103,6 @@ onMounted(async () => {
   if (!isEmpty(openSyncLocal)) {
     isOpenSync.value = openSyncLocal.isOpenSync;
   }
-  console.log("isOpenSync.value: ", isOpenSync.value);
 
   // 从 localStorage 初始化数据
   const storage = await getStorage();
@@ -170,7 +169,7 @@ function handleAdd() {
     id: addDataId,
     from: "",
     cookieName: "",
-    to: "",
+    to: "localhost",
   });
 
   // 新增后空数据可以编辑
