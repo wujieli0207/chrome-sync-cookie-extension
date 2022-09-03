@@ -8,8 +8,11 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AButton: typeof import('ant-design-vue/es')['Button']
+    ACol: typeof import('ant-design-vue/es')['Col']
     AInput: typeof import('ant-design-vue/es')['Input']
     APopconfirm: typeof import('ant-design-vue/es')['Popconfirm']
+    ARow: typeof import('ant-design-vue/es')['Row']
+    ASwitch: typeof import('ant-design-vue/es')['Switch']
     ATable: typeof import('ant-design-vue/es')['Table']
     Main: typeof import('./src/components/Main.vue')['default']
   }

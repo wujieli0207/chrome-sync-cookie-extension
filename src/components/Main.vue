@@ -31,16 +31,29 @@
     </template>
   </a-table>
 
-  <!-- 新增按钮 -->
-  <a-button type="primary" @click="handleAdd">新增</a-button>
+  <a-row class="handle">
+    <a-col :span="4">
+      <a-button type="primary" @click="handleAdd">新增</a-button>
+    </a-col>
+    <a-col :span="8">
+      是否开启同步：
+      <a-switch
+        v-model:checked="isOpenSync"
+        checked-children="开"
+        un-checked-children="关"
+      ></a-switch>
+    </a-col>
+  </a-row>
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref, unref } from "vue";
+import { onMounted, reactive, ref, unref, watch } from "vue";
 import type { UnwrapRef } from "vue";
 import { cloneDeep, isEmpty } from "lodash-es";
 import useStorage from "./hooks/useStorage";
 import { ICookieTableDataSource, ICookieTableColumn, LIST_KEY } from "./type";
+
+const isOpenSync = ref(true);
 
 const columns = ref<ICookieTableColumn[]>([
   {
@@ -108,6 +121,14 @@ const editableData: UnwrapRef<Record<string, ICookieTableDataSource>> =
 const { updateStorage, getStorage, updateCookie } = useStorage();
 
 onMounted(async () => {
+  // 初始化开启同步状态
+  const openSyncLocal = await chrome.storage.local.get("isOpenSync");
+
+  if (!isEmpty(openSyncLocal)) {
+    isOpenSync.value = openSyncLocal.isOpenSync;
+  }
+  console.log("isOpenSync.value: ", isOpenSync.value);
+
   // 从 localStorage 初始化数据
   const storage = await getStorage();
   const domainList = !isEmpty(storage)
@@ -123,7 +144,6 @@ onMounted(async () => {
     updateStorage(dataSource.value);
 
     dataSource.value.forEach((item) => {
-      console.log("item: ", item);
       updateCookie({
         from: item.from,
         to: item.to,
@@ -131,6 +151,10 @@ onMounted(async () => {
       });
     });
   }
+});
+
+watch(isOpenSync, async () => {
+  await chrome.storage.local.set({ isOpenSync: isOpenSync.value });
 });
 
 function handleEdit(rowId: string) {
@@ -177,3 +201,9 @@ function handleAdd() {
   handleEdit(addDataId);
 }
 </script>
+
+<style>
+.handle {
+  margin-top: 1rem;
+}
+</style>

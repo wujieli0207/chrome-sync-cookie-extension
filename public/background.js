@@ -3,6 +3,12 @@ addCookiesChangeEvent();
 function addCookiesChangeEvent() {
   console.log("start addCookiesChangeEvent");
   chrome.cookies.onChanged.addListener(async ({ cookie, removed }) => {
+    // 判断是否开启同步
+    const openSyncObj = await chrome.storage.local.get("isOpenSync");
+    const isOpenSync = openSyncObj.isOpenSync;
+
+    if (!isOpenSync) return;
+
     const storage = await chrome.storage.local.get(["domainList"]);
 
     if (Object.keys(storage).length === 0) return;
