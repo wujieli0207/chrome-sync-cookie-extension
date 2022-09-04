@@ -8,6 +8,6 @@
 2. 安装 node_modules 并打包代码
    ```shell
     pnpm run  i
-    pnpm run dev
+    pnpm run build
    ```
 3. 打开 chrome 浏览器开发者模式，选择“加载解压缩的扩展”，选择打包的 dist 文件
